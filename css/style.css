@@ -1,0 +1,80 @@
+html, body {
+  /* disable scrolling */
+  overflow: hidden;
+
+  /* disable scalling */
+  touch-action: none;
+}
+
+body {
+  margin: 0;
+  background-color: #faf5f0;
+
+  /* text style */
+  font-family: 'Noto Sans JP', sans-serif;
+  text-align: center;
+  color: #505050;
+}
+
+p {
+  margin: 0;
+
+  /* disable select */
+  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+}
+
+.overlay {
+  /* overlay canvas */
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  display: block;
+}
+
+#caption {
+  top: -webkit-calc(85% -  8px) ;
+  /* text style */
+  font-size: 16px;
+
+}
+
+#comment {
+  top: -webkit-calc(85% + 14px) ;
+  /* text style */
+  font-size: 12px;
+}
+
+/* responsive layout styles */
+@media screen and (max-width:600px) {
+  #caption {
+    top: -webkit-calc(85% -  7px) ;
+    /* text style */
+    font-size: 15px;
+
+  }
+
+  #comment {
+    top: -webkit-calc(85% + 13px) ;
+    /* text style */
+    font-size: 11px;
+  }
+}
+
+@media screen and (max-width:350px) {
+  #caption {
+    top: -webkit-calc(85% -  6px) ;
+    /* text style */
+    font-size: 14px;
+
+  }
+
+  #comment {
+    top: -webkit-calc(85% + 11px) ;
+    /* text style */
+    font-size: 10px;
+  }
+}
