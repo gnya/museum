@@ -3,34 +3,87 @@
  */
 
 
-const runge_kutta = (a, h, n, x) => {
-  var vectors = new Array(n + 1);
-  var t = 0.0;
+ class MuseumManager {
+   constructor(x0, n = 30000, h = 0.01) {
+     this.x0 = x0;
+     this.n = n;
+     this.h = h;
 
-  vectors[0] = x.clone();
+     this.vertex = null;
+     this.colors = null;
 
-  for (var i = 0; i < n; i++) {
-    var x0 = x.clone();
-    var k0 = a.f(t        , x0).multiplyScalar(h);
+     var geometry = new THREE.Geometry();
 
-    var x1 = x.clone().addScaledVector(k0, .5);
-    var k1 = a.f(t + h / 2, x1).multiplyScalar(h);
+     geometry.vertices = new Array(this.n + 1);
+     geometry.colors   = new Array(this.n + 1);
 
-    var x2 = x.clone().addScaledVector(k1, .5);
-    var k2 = a.f(t + h / 2, x2).multiplyScalar(h);
+     var material = new THREE.LineBasicMaterial({
+       color: 0xffffff,
+       vertexColors: THREE.VertexColors
+     });
 
-    var x3 = x.clone().add(k2);
-    var k3 = a.f(t + h    , x3).multiplyScalar(h);
+     this.line = new THREE.Line(geometry, material);
+   }
 
-    k1.multiplyScalar(2);
-    k2.multiplyScalar(2);
-    x.add(k0.add(k1).add(k2).add(k3).divideScalar(6));
+   calc_vertex(a) {
+     var s;
 
-    vectors[i + 1] = x.clone();
-  }
+     if (a instanceof LorenzAttractor) {
+       s = new RungeKuttaSolver(this.x0, this.n, this.h);
+     }
 
-  return vectors;
-}
+     if (a instanceof NoseHooverAttractor) {
+       s = new RungeKuttaSolver(this.x0, this.n, this.h);
+     }
+
+     if (a instanceof HalvorsenAttractor) {
+       s = new RungeKuttaSolver(this.x0, this.n, this.h);
+     }
+
+     if (a instanceof BurkeShawAttractor) {
+       s = new RungeKuttaSolver(this.x0, this.n, this.h);
+     }
+
+     if (a instanceof ChenAttractor) {
+       s = new RungeKuttaSolver(this.x0, this.n, this.h);
+     }
+
+     this.vertex = s.calc(a);
+
+     // centering & scaling
+     var center = new THREE.Vector3();
+
+     for (var p of this.vertex) center.add(p);
+     center.divideScalar(this.n + 1);
+     for (var p of this.vertex) {
+       p.sub(center).multiplyScalar(a.scale);
+     }
+   }
+
+   calc_colors() {
+     this.colors = get_linecolor(this.n + 1);
+   }
+
+   update_vertex(a) {
+     this.calc_vertex(a);
+
+     for (var i = 0; i < this.n + 1; i++) {
+       this.line.geometry.vertices[i] = this.vertex[i].clone();
+     }
+
+     this.line.geometry.verticesNeedUpdate = true;
+   }
+
+   update_colors() {
+     this.calc_colors();
+
+     for (var i = 0; i < this.n + 1; i++) {
+       this.line.geometry.colors[i] = this.colors[i].clone();
+     }
+
+     this.line.geometry.colorsNeedUpdate = true;
+   }
+ }
 
 
 const get_linecolor = (n) => {
@@ -67,15 +120,6 @@ const get_linecolor = (n) => {
 }
 
 
-const centering = (v, s = 1.) => {
-  var c = new THREE.Vector3();
-
-  for (var p of v) c.add(p);
-  c.divideScalar(v.length);
-  for (var p of v) p.sub(c).multiplyScalar(s);
-}
-
-
 const init = () => {
   // create webGL render
   var renderer = new THREE.WebGLRenderer({
@@ -84,7 +128,6 @@ const init = () => {
     alpha: true,
     antialias: true
   });
-  //renderer.setClearColor(0xfaf5f0, 0);
 
   // create scene
   var scene = new THREE.Scene();
@@ -108,44 +151,49 @@ const init = () => {
   resize(); // first call
   window.addEventListener('resize', resize);
 
-
-  // runge kutta
-  var attractor = new LorenzAttractor(10, 28, 8 / 3);
-  var h = 0.01;
-  var n = 30000;
-  var x = new THREE.Vector3(0.1, 0, 0);
-  var vertex = runge_kutta(attractor, h, n, x);
-
+  // strange attractor
+  var attractors = [
+    new LorenzAttractor(10, 28, 8 / 3),
+    new NoseHooverAttractor(1.5),
+    new HalvorsenAttractor(1.3),
+    new BurkeShawAttractor(10, 4.272),
+    new ChenAttractor(36, 3, 28.7),
+  ];
+  var attractor_i = 0;
   var caption = document.querySelector('#caption');
   var comment = document.querySelector('#comment');
-  caption.innerHTML += attractor.caption;
-  comment.innerHTML += attractor.comment;
+  var math = document.querySelector('#math');
 
-  // line color
-  var colors = get_linecolor(n);
+  var x0 = new THREE.Vector3(0.2, -0.1, 0.1);
+  var manager = new MuseumManager(x0);
 
-  // centering
-  centering(vertex, attractor.scale);
+  manager.update_colors();
+  scene.add(manager.line);
 
-  // create attractor
-  var geo_line = new THREE.Geometry();
-  for (var p of vertex) {
-    geo_line.vertices.push(p.clone());
-  }
-  for (var c of colors) {
-    geo_line.colors.push(c.clone());
+  const update_attractor = () => {
+    caption.innerHTML = attractors[attractor_i].caption;
+    comment.innerHTML = attractors[attractor_i].comment;
+    manager.update_vertex(attractors[attractor_i]);
   }
 
-  var mat_line = new THREE.LineBasicMaterial({
-    color: 0xffffff,
-    vertexColors: THREE.VertexColors
-  });
-  var line = new THREE.Line(geo_line, mat_line);
-  line.position.y = 50;
-  scene.add(line);
+  update_attractor();
 
   // drag controls
-  var dragctrl = new DragObjectControls(line);
+  var dragctrl = new DragObjectControls(manager.line);
+
+
+  var older = document.querySelector('#older');
+  var newer = document.querySelector('#newer');
+  older.addEventListener('mousedown', (e) => {
+    attractor_i++;
+    attractor_i %= attractors.length;
+    update_attractor();
+  });
+  newer.addEventListener('mousedown', (e) => {
+    attractor_i--;
+    attractor_i = (attractor_i + attractors.length) % attractors.length;
+    update_attractor();
+  });
 
 
   // main loop

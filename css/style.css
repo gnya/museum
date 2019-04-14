@@ -4,6 +4,12 @@ html, body {
 
   /* disable scalling */
   touch-action: none;
+
+  /* disable select */
+  user-select: none;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
 }
 
 body {
@@ -13,17 +19,27 @@ body {
   /* text style */
   font-family: 'Noto Sans JP', sans-serif;
   text-align: center;
-  color: #505050;
+  color: #909090;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  display: inline-block;
+  vertical-align: middle;
 }
 
 p {
   margin: 0;
 
-  /* disable select */
-  user-select: none;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
+  /* text ellipsis */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .overlay {
@@ -35,46 +51,52 @@ p {
   display: block;
 }
 
+.icon-18 {
+  font-size: 18px;
+}
+
+#container {
+  top: 5%;
+}
+
+#plate {
+  width: 300px;
+}
+
 #caption {
-  top: -webkit-calc(85% -  8px) ;
+  display: block;
   /* text style */
   font-size: 16px;
-
+  color: #707070;
 }
 
 #comment {
-  top: -webkit-calc(85% + 14px) ;
+  display: block;
+  /* text style */
+  font-size: 12px;
+}
+
+#older {
+  cursor: pointer;
+  /* text style */
+  font-size: 12px;
+}
+
+#newer {
+  cursor: pointer;
   /* text style */
   font-size: 12px;
 }
 
 /* responsive layout styles */
 @media screen and (max-width:600px) {
-  #caption {
-    top: -webkit-calc(85% -  7px) ;
-    /* text style */
-    font-size: 15px;
-
-  }
-
-  #comment {
-    top: -webkit-calc(85% + 13px) ;
-    /* text style */
-    font-size: 11px;
+  #plate {
+    width: 270px;
   }
 }
 
 @media screen and (max-width:350px) {
-  #caption {
-    top: -webkit-calc(85% -  6px) ;
-    /* text style */
-    font-size: 14px;
-
-  }
-
-  #comment {
-    top: -webkit-calc(85% + 11px) ;
-    /* text style */
-    font-size: 10px;
+  #plate {
+    width: 250px;
   }
 }
