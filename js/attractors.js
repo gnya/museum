@@ -5,10 +5,14 @@
 
 class Attractor {
   constructor() {
-    this.scale = null;
     this.caption = null;
     this.comment = null;
-    this.math = null;
+    this.preset = [];
+    this.preset.Solver = null;
+    this.preset.x0 = null;
+    this.preset.n = null;
+    this.preset.h = null;
+    this.preset.scale = null;
   }
 
   f(t, u) {
@@ -20,9 +24,13 @@ class Attractor {
 class LorenzAttractor extends Attractor {
   constructor(p, r, b) {
     super();
-    this.scale = 7;
     this.caption = 'Lorenz System, 1963';
     this.comment = 'Edward Lorenz (b. 1917)';
+    this.preset.Solver = RungeKuttaSolver;
+    this.preset.x0 = new THREE.Vector3(0.2, -0.1, 0.1);
+    this.preset.n = 20000;
+    this.preset.h = 0.008;
+    this.preset.scale = 7;
     this.p = p;
     this.r = r;
     this.b = b;
@@ -46,9 +54,13 @@ class LorenzAttractor extends Attractor {
 class NoseHooverAttractor extends Attractor {
   constructor(a) {
     super();
-    this.scale = 50;
     this.caption = 'Nosé-Hoover System, 1986';
     this.comment = 'S. Nosé (b. 1951) and W. Hoover (b. 1936)';
+    this.preset.Solver = RungeKuttaSolver;
+    this.preset.x0 = new THREE.Vector3(0.2, -0.1, 0.1);
+    this.preset.n = 20000;
+    this.preset.h = 0.02;
+    this.preset.scale = 50;
     this.a = a;
   }
 
@@ -70,9 +82,13 @@ class NoseHooverAttractor extends Attractor {
 class HalvorsenAttractor extends Attractor {
   constructor(a) {
     super();
-    this.scale = 16;
     this.caption = 'Halvorsen Chaotic Attractor';
     this.comment = 'Arne Dehli Halvorsen (unpublished)';
+    this.preset.Solver = RungeKuttaSolver;
+    this.preset.x0 = new THREE.Vector3(0.2, -0.1, 0.1);
+    this.preset.n = 20000;
+    this.preset.h = 0.01;
+    this.preset.scale = 16;
     this.a = a;
   }
 
@@ -93,9 +109,13 @@ class HalvorsenAttractor extends Attractor {
 class BurkeShawAttractor extends Attractor {
   constructor(S, V) {
     super();
-    this.scale = 75;
     this.caption = 'Burke-Shaw Chaotic Attractor, 1981';
     this.comment = 'B. Burke (b. 1941) and R. Shaw (b. 1946)';
+    this.preset.Solver = RungeKuttaSolver;
+    this.preset.x0 = new THREE.Vector3(0.2, -0.1, 0.1);
+    this.preset.n = 20000;
+    this.preset.h = 0.01;
+    this.preset.scale = 75;
     this.S = S;
     this.V = V;
   }
@@ -117,9 +137,13 @@ class BurkeShawAttractor extends Attractor {
 class ChenAttractor extends Attractor {
   constructor(a, b, c) {
     super();
-    this.scale = 8;
     this.caption = 'Chen Chaotic Attractor, 1981';
     this.comment = 'Guanrong Chen (b. 1948)';
+    this.preset.Solver = RungeKuttaSolver;
+    this.preset.x0 = new THREE.Vector3(0.2, -0.1, 0.1);
+    this.preset.n = 20000;
+    this.preset.h = 0.002;
+    this.preset.scale = 8;
     this.a = a;
     this.b = b;
     this.c = c;
